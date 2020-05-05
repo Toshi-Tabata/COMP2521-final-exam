@@ -26,6 +26,7 @@ int equalBST(BSTree t1, BSTree t2) {
     // If either are NULL (but not both), then we have a mismatch
     if (t1 == NULL || t2 == NULL) return 0;
 
+    // If we have a mismatch, return 0;
     if (key(t1) != key(t2)) return 0;
 
     // Checks left and right subtrees recursively (DFS manner)
