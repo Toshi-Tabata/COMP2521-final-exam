@@ -6,17 +6,6 @@
 
 #include "list.h"
 
-/* 
-    You will submit only this one file.
-
-    Implement the function "mergeOrdered" below. Read the exam paper for a
-    detailed specification and description of your task.  
-
-    - DO NOT modify the code in any other files. 
-    - You can add static helper functions to this file.  
-    - DO NOT add a "main" function to this file. 
-*/
-
 /*
     NOTES:
 
@@ -31,26 +20,10 @@
 */
 
 /*
-    Possible Algorithm:
-    Merge sort?
-    Traverse both lists at the same time and compare at each step
-
-    // Below will break if either list is NULL - need to handle
-    if list1 == list2:
-        add both to new list
-        list1++;
-        list2++;
-    elif list1 > list2:
-        add list1 to newlist
-        list1++;
-    else:
-        add list2 to newlist
-        list2++;
-
     Time: O(n + m) as required (traverse both lists fully when m and n do not have overlaps)
-        We do O(n + m) comparisons
+        We do O(min(n + m)) comparisons
     Space: O(n + m) additional space (store both lists in a new list)
-        Use 2 pointers == O(1) space
+        Use 2 pointers O(1) space
     
     Cases:
     - List1 empty [] vs [1, 2, 3]
@@ -64,28 +37,18 @@
     - overlaps between the lists
 */
 
-// Insert nodes at the end of the "new" list and updates first/last
-static void insert(List new, int value) {
-    if (new == NULL) return;
+static void insert(List new, int value);
+static void appendList(List new, Node *head);
 
-    Node *n = newNode(value);
+/*
+    How the function works:
 
-    if (new->first == NULL) 
-        new->first = n;
-    else 
-        new->last->next = n;
-    
-    new->last = n;
-}
-
-// Appends all the nodes starting from head to new
-static void appendList(List new, Node *head) {
-    while (head != NULL) {
-        insert(new, head->value);
-        head = head->next;
-    }
-}
-
+    1. Create a new list ("new")
+    2. Make 2 pointers, curr1/curr2 (for list1/list2), starting from the start of the list
+    3. Move pointer forward for minValue(curr1, curr2)
+        - if they're equal, move both forward
+    4. If we added all items from one list, add the rest of the other list to new
+*/
 
 List mergeOrdered(List list1, List list2) {
     List new = newList();
@@ -115,6 +78,7 @@ List mergeOrdered(List list1, List list2) {
         }
     }
 
+    // Add the rest of the unfinished list
     if (curr1 != NULL) {
         appendList(new, curr1);
     } else if (curr2 != NULL) {
@@ -122,4 +86,27 @@ List mergeOrdered(List list1, List list2) {
     }
 
     return new;
+}
+
+
+// Insert nodes at the end of the "new" list and updates first/last
+static void insert(List new, int value) {
+    if (new == NULL) return;
+
+    Node *n = newNode(value);
+
+    if (new->first == NULL) 
+        new->first = n;
+    else 
+        new->last->next = n;
+    
+    new->last = n;
+}
+
+// Appends all the nodes starting from head to new
+static void appendList(List new, Node *head) {
+    while (head != NULL) {
+        insert(new, head->value);
+        head = head->next;
+    }
 }
